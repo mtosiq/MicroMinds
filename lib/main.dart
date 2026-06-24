@@ -1,5 +1,6 @@
+import 'package:MicroMinds/src/utils/theme.dart';
+import 'package:MicroMinds/src/views/splashscreen.dart';
 import 'package:flutter/material.dart';
-import 'package:foodapp/src/views/splashscreen.dart';
 
 void main() {
   runApp(const MyApp());
@@ -10,9 +11,10 @@ class MyApp extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return const MaterialApp(
+    return MaterialApp(
       debugShowCheckedModeBanner: false,
-      home: SplashScreen(),
+      theme: AppTheme.lightTheme,
+      home: const SplashScreen(),
     );
   }
 }

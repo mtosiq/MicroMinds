@@ -1,7 +1,7 @@
 import 'dart:math' as math;
 
 import 'package:flutter/material.dart';
-import 'package:foodapp/src/views/homepage.dart';
+import '../home/homepage.dart';
 
 class SplashScreen extends StatefulWidget {
   const SplashScreen({super.key});
@@ -37,7 +37,7 @@ class _SplashScreenState extends State<SplashScreen>
   // ── Palette ──────────────────────────────────────────────────────
   static const _bg1 = Color(0xFF030B14);
   static const _bg2 = Color(0xFF071220);
-  static const _green = Color(0xFF00C896);
+  static const _green = Color.fromRGBO(0, 200, 150, 1);
   static const _blue = Color(0xFF0095FF);
   static const _orange = Color(0xFFFF6B35);
   static const _white = Color(0xFFF0F8FF);
@@ -106,7 +106,7 @@ class _SplashScreenState extends State<SplashScreen>
     if (!mounted) return;
     Navigator.of(context).push(
       PageRouteBuilder(
-        pageBuilder: (_, __, ___) => Homepage(),
+        pageBuilder: (_, __, ___) => HomeScreen(),
         transitionsBuilder: (_, anim, __, child) =>
             FadeTransition(opacity: anim, child: child),
         transitionDuration: const Duration(milliseconds: 700),
