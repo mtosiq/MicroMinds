@@ -6,8 +6,9 @@ class AppTheme {
 
   // ==================== COLORS ====================
   // Backgrounds
-  static const Color bg1 = Color(0xFF030B14); // Very dark background
-  static const Color bg2 = Color(0xFF071220); // Dark secondary background
+  static const Color bg1 = Color(0xFF141414); // Very dark background
+  static const Color bg2 = Color(0xFF071220);
+  static const Color button = Color(0xff2a2a2a); // Dark secondary background
 
   // Primary Colors
   static const Color primaryColor = Color(0xFF00C896); // Green accent

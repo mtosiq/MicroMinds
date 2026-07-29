@@ -1,7 +1,5 @@
-import 'dart:math' as math;
-
 import 'package:flutter/material.dart';
-import '../home/homepage.dart';
+import 'package:MicroMinds/src/views/Navigation_Screen.dart';
 
 class SplashScreen extends StatefulWidget {
   const SplashScreen({super.key});
@@ -12,602 +10,374 @@ class SplashScreen extends StatefulWidget {
 
 class _SplashScreenState extends State<SplashScreen>
     with TickerProviderStateMixin {
-  // ── Controllers ──────────────────────────────────────────────────
-  late final AnimationController _bgCtrl;
-  late final AnimationController _logoCtrl;
-  late final AnimationController _pulseCtrl;
-  late final AnimationController _orbitCtrl;
-  late final AnimationController _textCtrl;
-  late final AnimationController _circuitCtrl;
-  late final AnimationController _ringCtrl;
+  late AnimationController logoController;
+  late AnimationController textController;
+  late AnimationController pulseController;
 
-  // ── Animations ───────────────────────────────────────────────────
-  late final Animation<double> _bgFade;
-  late final Animation<double> _logoScale;
-  late final Animation<double> _logoRotate;
-  late final Animation<double> _pulse;
-  late final Animation<double> _orbit;
-  late final Animation<double> _titleOpacity;
-  late final Animation<double> _titleSlide;
-  late final Animation<double> _subtitleOpacity;
-  late final Animation<double> _badgeOpacity;
-  late final Animation<double> _circuit;
-  late final Animation<double> _ring;
+  late Animation<double> logoScale;
+  late Animation<double> textFade;
+  late Animation<double> pulse;
 
-  // ── Palette ──────────────────────────────────────────────────────
-  static const _bg1 = Color(0xFF030B14);
-  static const _bg2 = Color(0xFF071220);
-  static const _green = Color.fromRGBO(0, 200, 150, 1);
-  static const _blue = Color(0xFF0095FF);
-  static const _orange = Color(0xFFFF6B35);
-  static const _white = Color(0xFFF0F8FF);
-  static const _muted = Color(0xFF7A9BB5);
+  static const Color background = Color(0xff050507);
+
+  static const Color orange = Color(0xffff6b4a);
+
+  static const Color purple = Color(0xff9b5cff);
+
+  static const Color green = Color(0xff35D07F);
 
   @override
   void initState() {
     super.initState();
 
-    _bgCtrl = AnimationController(
-        vsync: this, duration: const Duration(milliseconds: 900));
-    _logoCtrl = AnimationController(
-        vsync: this, duration: const Duration(milliseconds: 1600));
-    _pulseCtrl = AnimationController(
-        vsync: this, duration: const Duration(milliseconds: 2400))
-      ..repeat(reverse: true);
-    _orbitCtrl = AnimationController(
-        vsync: this, duration: const Duration(milliseconds: 7000))
-      ..repeat();
-    _textCtrl = AnimationController(
-        vsync: this, duration: const Duration(milliseconds: 1000));
-    _circuitCtrl = AnimationController(
-        vsync: this, duration: const Duration(milliseconds: 3000))
-      ..repeat();
-    _ringCtrl = AnimationController(
-        vsync: this, duration: const Duration(milliseconds: 2000))
-      ..repeat();
+    logoController = AnimationController(
+      vsync: this,
+      duration: const Duration(milliseconds: 1200),
+    );
 
-    _bgFade = CurvedAnimation(parent: _bgCtrl, curve: Curves.easeIn);
-    _logoScale = Tween<double>(begin: 0.0, end: 1.0).animate(CurvedAnimation(
-        parent: _logoCtrl,
-        curve: const Interval(0.0, 0.65, curve: Curves.elasticOut)));
-    _logoRotate = Tween<double>(begin: 0.4, end: 0.0).animate(CurvedAnimation(
-        parent: _logoCtrl,
-        curve: const Interval(0.0, 0.65, curve: Curves.easeOut)));
-    _pulse = Tween<double>(begin: 0.92, end: 1.08)
-        .animate(CurvedAnimation(parent: _pulseCtrl, curve: Curves.easeInOut));
-    _orbit = Tween<double>(begin: 0.0, end: 2 * math.pi).animate(_orbitCtrl);
-    _titleOpacity = Tween<double>(begin: 0.0, end: 1.0)
-        .animate(CurvedAnimation(parent: _textCtrl, curve: Curves.easeOut));
-    _titleSlide = Tween<double>(begin: 28.0, end: 0.0)
-        .animate(CurvedAnimation(parent: _textCtrl, curve: Curves.easeOut));
-    _subtitleOpacity = Tween<double>(begin: 0.0, end: 1.0).animate(
-        CurvedAnimation(
-            parent: _textCtrl,
-            curve: const Interval(0.35, 1.0, curve: Curves.easeOut)));
-    _badgeOpacity = Tween<double>(begin: 0.0, end: 1.0).animate(CurvedAnimation(
-        parent: _textCtrl,
-        curve: const Interval(0.6, 1.0, curve: Curves.easeOut)));
-    _circuit = Tween<double>(begin: 0.0, end: 1.0)
-        .animate(CurvedAnimation(parent: _circuitCtrl, curve: Curves.linear));
-    _ring = Tween<double>(begin: 0.0, end: 1.0)
-        .animate(CurvedAnimation(parent: _ringCtrl, curve: Curves.easeInOut));
+    textController = AnimationController(
+      vsync: this,
+      duration: const Duration(milliseconds: 1000),
+    );
 
-    // Sequence
-    _bgCtrl.forward().then((_) {
-      _logoCtrl.forward().then((_) {
-        _textCtrl.forward().then((_) {
-          Future.delayed(const Duration(milliseconds: 1400), _navigate);
-        });
-      });
-    });
+    pulseController = AnimationController(
+      vsync: this,
+      duration: const Duration(seconds: 2),
+    )..repeat(reverse: true);
+
+    logoScale = Tween<double>(
+      begin: 0,
+      end: 1,
+    ).animate(
+      CurvedAnimation(
+        parent: logoController,
+        curve: Curves.elasticOut,
+      ),
+    );
+
+    textFade = Tween<double>(
+      begin: 0,
+      end: 1,
+    ).animate(
+      CurvedAnimation(
+        parent: textController,
+        curve: Curves.easeIn,
+      ),
+    );
+
+    pulse = Tween<double>(
+      begin: .95,
+      end: 1.08,
+    ).animate(
+      CurvedAnimation(
+        parent: pulseController,
+        curve: Curves.easeInOut,
+      ),
+    );
+
+    startSplash();
   }
 
-  void _navigate() {
+  Future<void> startSplash() async {
+    await logoController.forward();
+
+    await textController.forward();
+
+    await Future.delayed(
+      const Duration(seconds: 2),
+    );
+
     if (!mounted) return;
-    Navigator.of(context).push(
-      PageRouteBuilder(
-        pageBuilder: (_, __, ___) => HomeScreen(),
-        transitionsBuilder: (_, anim, __, child) =>
-            FadeTransition(opacity: anim, child: child),
-        transitionDuration: const Duration(milliseconds: 700),
+
+    Navigator.pushReplacement(
+      context,
+      MaterialPageRoute(
+        builder: (context) => const MainNavigation(),
       ),
     );
   }
 
   @override
   void dispose() {
-    _bgCtrl.dispose();
-    _logoCtrl.dispose();
-    _pulseCtrl.dispose();
-    _orbitCtrl.dispose();
-    _textCtrl.dispose();
-    _circuitCtrl.dispose();
-    _ringCtrl.dispose();
+    logoController.dispose();
+
+    textController.dispose();
+
+    pulseController.dispose();
+
     super.dispose();
   }
 
-  // ── Build ─────────────────────────────────────────────────────────
-
   @override
   Widget build(BuildContext context) {
-    final size = MediaQuery.of(context).size;
-
     return Scaffold(
-      backgroundColor: _bg1,
+      backgroundColor: background,
       body: AnimatedBuilder(
         animation: Listenable.merge([
-          _bgCtrl,
-          _logoCtrl,
-          _pulseCtrl,
-          _orbitCtrl,
-          _textCtrl,
-          _circuitCtrl,
-          _ringCtrl,
+          logoController,
+          textController,
+          pulseController,
         ]),
-        builder: (context, _) {
-          return Container(
-            decoration: BoxDecoration(
-              gradient: RadialGradient(
-                center: Alignment(0, -0.3),
-                radius: 1.4,
-                colors: [
-                  Color.lerp(_bg1, const Color(0xFF071A30), _bgFade.value)!,
-                  Color.lerp(_bg1, _bg2, _bgFade.value)!,
-                  _bg1,
-                ],
-                stops: const [0.0, 0.5, 1.0],
-              ),
-            ),
-            child: Stack(
-              alignment: Alignment.center,
-              children: [
-                // Grid pattern background
-                Opacity(
-                  opacity: 0.04 * _bgFade.value,
-                  child: CustomPaint(
-                    size: size,
-                    painter: _GridPainter(),
+        builder: (context, child) {
+          return Stack(
+            children: [
+              // Background
+
+              Container(
+                decoration: const BoxDecoration(
+                  gradient: RadialGradient(
+                    center: Alignment.topCenter,
+                    radius: 1.3,
+                    colors: [
+                      Color(0xff24120D),
+                      Color(0xff15101F),
+                      Color(0xff050507),
+                    ],
                   ),
                 ),
+              ),
 
-                // Ambient glows
-                _glow(Alignment(-0.6, -0.5), _green, 180, 0.10),
-                _glow(Alignment(0.6, -0.3), _blue, 200, 0.08),
-                _glow(Alignment(0.0, 0.5), _orange, 160, 0.07),
+              // Glow Effects
 
-                // Main content
-                Column(
+              Positioned(
+                top: -100,
+                left: -80,
+                child: glow(
+                  orange,
+                  260,
+                ),
+              ),
+
+              Positioned(
+                right: -100,
+                top: 150,
+                child: glow(
+                  purple,
+                  280,
+                ),
+              ),
+
+              Positioned(
+                bottom: -100,
+                left: 80,
+                child: glow(
+                  green,
+                  220,
+                ),
+              ),
+
+              // Floating Food
+
+              const Positioned(
+                top: 150,
+                left: 45,
+                child: FoodBubble(
+                  emoji: "🥕",
+                ),
+              ),
+
+              const Positioned(
+                top: 240,
+                right: 45,
+                child: FoodBubble(
+                  emoji: "🍅",
+                ),
+              ),
+
+              const Positioned(
+                bottom: 220,
+                left: 60,
+                child: FoodBubble(
+                  emoji: "🥑",
+                ),
+              ),
+
+              Center(
+                child: Column(
                   mainAxisAlignment: MainAxisAlignment.center,
                   children: [
-                    // ── Logo ──────────────────────────────────────
-                    SizedBox(
-                      width: 240,
-                      height: 240,
-                      child: Stack(
-                        alignment: Alignment.center,
-                        children: [
-                          // Outer scanning ring
-                          CustomPaint(
-                            size: const Size(220, 220),
-                            painter: _ScanRingPainter(
-                              progress: _ring.value,
-                              color: _green,
-                              opacity: _logoScale.value,
-                            ),
-                          ),
-
-                          // Orbiting macro icons
-                          Transform.rotate(
-                            angle: _orbit.value,
-                            child: SizedBox(
-                              width: 210,
-                              height: 210,
-                              child: Stack(children: [
-                                _orbitIcon(0, '🥦', _orbit.value),
-                                _orbitIcon(math.pi * 0.5, '💪', _orbit.value),
-                                _orbitIcon(math.pi, '🧬', _orbit.value),
-                                _orbitIcon(math.pi * 1.5, '⚡', _orbit.value),
-                              ]),
-                            ),
-                          ),
-
-                          // Pulse glow behind logo
-                          Transform.scale(
-                            scale: _pulse.value,
-                            child: Container(
-                              width: 150,
-                              height: 150,
-                              decoration: BoxDecoration(
-                                shape: BoxShape.circle,
-                                gradient: RadialGradient(colors: [
-                                  _green.withOpacity(0.18 * _logoScale.value),
-                                  _blue.withOpacity(0.10 * _logoScale.value),
-                                  Colors.transparent,
-                                ]),
-                              ),
-                            ),
-                          ),
-
-                          // Logo mark
-                          Transform.scale(
-                            scale: _logoScale.value,
-                            child: Transform.rotate(
-                              angle: _logoRotate.value,
-                              child: _logoMark(),
-                            ),
-                          ),
-                        ],
-                      ),
+                    Transform.scale(
+                      scale: logoScale.value * pulse.value,
+                      child: logo(),
                     ),
-
-                    const SizedBox(height: 20),
-
-                    // ── App name ──────────────────────────────────
-                    Transform.translate(
-                      offset: Offset(0, _titleSlide.value),
-                      child: Opacity(
-                        opacity: _titleOpacity.value,
-                        child: RichText(
-                          text: const TextSpan(
-                            children: [
-                              TextSpan(
-                                text: 'Macro',
-                                style: TextStyle(
-                                  fontSize: 42,
-                                  fontWeight: FontWeight.w800,
-                                  letterSpacing: 1,
-                                  color: _white,
-                                ),
-                              ),
-                              TextSpan(
-                                text: 'Minds',
-                                style: TextStyle(
-                                  fontSize: 42,
-                                  fontWeight: FontWeight.w800,
-                                  letterSpacing: 1,
-                                  color: _green,
-                                ),
-                              ),
-                            ],
-                          ),
-                        ),
-                      ),
+                    const SizedBox(
+                      height: 30,
                     ),
-
-                    const SizedBox(height: 8),
-
-                    // Tagline
-                    Opacity(
-                      opacity: _subtitleOpacity.value,
+                    FadeTransition(
+                      opacity: textFade,
                       child: const Text(
-                        'AI · Nutrition · Performance',
+                        "ChefAI",
                         style: TextStyle(
-                          fontSize: 13,
-                          fontWeight: FontWeight.w400,
-                          letterSpacing: 3.5,
-                          color: _muted,
+                          color: Colors.white,
+                          fontSize: 48,
+                          fontWeight: FontWeight.w900,
+                          letterSpacing: 1,
                         ),
                       ),
                     ),
-
-                    const SizedBox(height: 20),
-
-                    // Badges
-                    Opacity(
-                      opacity: _badgeOpacity.value,
+                    const SizedBox(
+                      height: 12,
+                    ),
+                    FadeTransition(
+                      opacity: textFade,
+                      child: const Text(
+                        "Your Personal AI Cooking Assistant",
+                        style: TextStyle(
+                          color: Colors.grey,
+                          fontSize: 13,
+                          letterSpacing: 1.5,
+                        ),
+                      ),
+                    ),
+                    const SizedBox(
+                      height: 35,
+                    ),
+                    FadeTransition(
+                      opacity: textFade,
                       child: Row(
                         mainAxisSize: MainAxisSize.min,
                         children: [
-                          _badge('🍳  Recipes', _green),
-                          const SizedBox(width: 10),
-                          _badge('🧠  AI Powered', _blue),
-                          const SizedBox(width: 10),
-                          _badge('💪  Fitness', _orange),
+                          badge("🍽 Recipes", orange),
+                          const SizedBox(width: 8),
+                          badge("📸 Scan", purple),
+                          const SizedBox(width: 8),
+                          badge("🥗 Healthy", green),
                         ],
                       ),
                     ),
+                    const SizedBox(
+                      height: 50,
+                    ),
+                    FadeTransition(
+                      opacity: textFade,
+                      child: const Text(
+                        "AI Chef is preparing ideas...",
+                        style: TextStyle(
+                          color: Colors.grey,
+                          fontSize: 12,
+                        ),
+                      ),
+                    )
                   ],
                 ),
-
-                // Bottom loading bar
-                Positioned(
-                  bottom: 52,
-                  child: Opacity(
-                    opacity: _badgeOpacity.value,
-                    child: _loadingBar(),
-                  ),
-                ),
-              ],
-            ),
+              )
+            ],
           );
         },
       ),
     );
   }
 
-  // ── Logo mark ──────────────────────────────────────────────────────
-
-  Widget _logoMark() {
+  Widget logo() {
     return Container(
-      width: 130,
-      height: 130,
+      height: 150,
+      width: 150,
       decoration: BoxDecoration(
         shape: BoxShape.circle,
         gradient: const LinearGradient(
-          begin: Alignment.topLeft,
-          end: Alignment.bottomRight,
-          colors: [Color(0xFF0A1F35), Color(0xFF071525)],
-        ),
-        border: Border.all(
-          color: _green.withOpacity(0.5),
-          width: 1.5,
+          colors: [
+            orange,
+            purple,
+          ],
         ),
         boxShadow: [
           BoxShadow(
-              color: _green.withOpacity(0.25), blurRadius: 30, spreadRadius: 4),
-          BoxShadow(
-              color: _blue.withOpacity(0.15), blurRadius: 20, spreadRadius: 2),
-          BoxShadow(
-              color: Colors.black.withOpacity(0.5),
-              blurRadius: 20,
-              offset: const Offset(0, 8)),
+            color: orange.withOpacity(.4),
+            blurRadius: 45,
+            spreadRadius: 8,
+          )
         ],
       ),
-      child: Stack(
-        alignment: Alignment.center,
-        children: [
-          // Circuit lines painted inside
-          CustomPaint(
-            size: const Size(130, 130),
-            painter: _CircuitPainter(
-              progress: _circuit.value,
-              color: _green,
+      child: Container(
+        margin: const EdgeInsets.all(6),
+        decoration: const BoxDecoration(
+          color: Color(0xff15171D),
+          shape: BoxShape.circle,
+        ),
+        child: const Center(
+          child: Text(
+            "👨‍🍳",
+            style: TextStyle(
+              fontSize: 65,
             ),
-          ),
-          // Brain + bolt icon
-          Column(
-            mainAxisSize: MainAxisSize.min,
-            children: [
-              const Text('🧠', style: TextStyle(fontSize: 36)),
-              const SizedBox(height: 2),
-              Container(
-                width: 40,
-                height: 1.5,
-                decoration: BoxDecoration(
-                  gradient: LinearGradient(colors: [
-                    _green.withOpacity(0),
-                    _green,
-                    _green.withOpacity(0),
-                  ]),
-                ),
-              ),
-              const SizedBox(height: 4),
-              const Text('⚡', style: TextStyle(fontSize: 14)),
-            ],
-          ),
-        ],
-      ),
-    );
-  }
-
-  // ── Helper widgets ─────────────────────────────────────────────────
-
-  Widget _orbitIcon(double angle, String emoji, double currentAngle) {
-    const r = 105.0;
-    final x = r + r * math.cos(angle) - 16;
-    final y = r + r * math.sin(angle) - 16;
-    return Positioned(
-      left: x,
-      top: y,
-      child: Transform.rotate(
-        angle: -currentAngle,
-        child: Text(emoji, style: const TextStyle(fontSize: 20)),
-      ),
-    );
-  }
-
-  Widget _glow(Alignment align, Color color, double size, double opacity) {
-    return Align(
-      alignment: align,
-      child: Opacity(
-        opacity: opacity * _bgFade.value,
-        child: Container(
-          width: size,
-          height: size,
-          decoration: BoxDecoration(
-            shape: BoxShape.circle,
-            gradient: RadialGradient(colors: [color, color.withOpacity(0)]),
           ),
         ),
       ),
     );
   }
 
-  Widget _badge(String label, Color color) {
+  Widget badge(String text, Color color) {
     return Container(
-      padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 5),
+      padding: const EdgeInsets.symmetric(
+        horizontal: 12,
+        vertical: 7,
+      ),
       decoration: BoxDecoration(
-        color: color.withOpacity(0.10),
+        color: color.withOpacity(.15),
         borderRadius: BorderRadius.circular(20),
-        border: Border.all(color: color.withOpacity(0.3), width: 0.8),
+        border: Border.all(
+          color: color.withOpacity(.4),
+        ),
       ),
       child: Text(
-        label,
+        text,
         style: TextStyle(
-          fontSize: 11,
-          fontWeight: FontWeight.w500,
-          letterSpacing: 0.5,
           color: color,
+          fontSize: 11,
+          fontWeight: FontWeight.bold,
         ),
       ),
     );
   }
 
-  Widget _loadingBar() {
-    return AnimatedBuilder(
-      animation: _orbitCtrl,
-      builder: (_, __) {
-        final progress = _orbitCtrl.value;
-        return Column(
-          children: [
-            Container(
-              width: 160,
-              height: 2,
-              decoration: BoxDecoration(
-                color: _green.withOpacity(0.15),
-                borderRadius: BorderRadius.circular(2),
-              ),
-              child: Align(
-                alignment: Alignment.centerLeft,
-                child: FractionallySizedBox(
-                  widthFactor: (progress * 1.4).clamp(0.0, 1.0),
-                  child: Container(
-                    decoration: BoxDecoration(
-                      borderRadius: BorderRadius.circular(2),
-                      gradient: LinearGradient(colors: [_green, _blue]),
-                    ),
-                  ),
-                ),
-              ),
-            ),
-            const SizedBox(height: 10),
-            Text(
-              'Initializing AI Engine...',
-              style: TextStyle(
-                fontSize: 11,
-                letterSpacing: 1.5,
-                color: _muted.withOpacity(0.7),
-              ),
-            ),
+  Widget glow(Color color, double size) {
+    return Container(
+      height: size,
+      width: size,
+      decoration: BoxDecoration(
+        shape: BoxShape.circle,
+        gradient: RadialGradient(
+          colors: [
+            color.withOpacity(.35),
+            Colors.transparent,
           ],
-        );
-      },
+        ),
+      ),
     );
   }
 }
 
-// ── Custom Painters ──────────────────────────────────────────────────────────
+class FoodBubble extends StatelessWidget {
+  final String emoji;
 
-class _ScanRingPainter extends CustomPainter {
-  final double progress;
-  final Color color;
-  final double opacity;
-  const _ScanRingPainter(
-      {required this.progress, required this.color, required this.opacity});
+  const FoodBubble({
+    super.key,
+    required this.emoji,
+  });
 
   @override
-  void paint(Canvas canvas, Size size) {
-    if (opacity <= 0) return;
-    final center = Offset(size.width / 2, size.height / 2);
-    final radius = size.width / 2 - 4;
-
-    // Static ring
-    canvas.drawCircle(
-      center,
-      radius,
-      Paint()
-        ..color = color.withOpacity(0.12 * opacity)
-        ..strokeWidth = 1
-        ..style = PaintingStyle.stroke,
+  Widget build(BuildContext context) {
+    return Container(
+      height: 55,
+      width: 55,
+      decoration: BoxDecoration(
+        color: const Color(0xff15171D),
+        shape: BoxShape.circle,
+        boxShadow: [
+          BoxShadow(
+            color: Colors.black.withOpacity(.4),
+            blurRadius: 15,
+          )
+        ],
+      ),
+      child: Center(
+        child: Text(
+          emoji,
+          style: const TextStyle(
+            fontSize: 28,
+          ),
+        ),
+      ),
     );
-
-    // Scanning arc
-    final rect = Rect.fromCircle(center: center, radius: radius);
-    canvas.drawArc(
-      rect,
-      progress * 2 * math.pi - math.pi / 2,
-      math.pi * 0.6,
-      false,
-      Paint()
-        ..color = color.withOpacity(0.7 * opacity)
-        ..strokeWidth = 2
-        ..style = PaintingStyle.stroke
-        ..strokeCap = StrokeCap.round,
-    );
-
-    // Tick marks
-    for (int i = 0; i < 12; i++) {
-      final angle = (i / 12) * 2 * math.pi;
-      final outer = Offset(
-        center.dx + radius * math.cos(angle),
-        center.dy + radius * math.sin(angle),
-      );
-      final inner = Offset(
-        center.dx + (radius - 8) * math.cos(angle),
-        center.dy + (radius - 8) * math.sin(angle),
-      );
-      canvas.drawLine(
-        outer,
-        inner,
-        Paint()
-          ..color = color.withOpacity(0.2 * opacity)
-          ..strokeWidth = 1,
-      );
-    }
   }
-
-  @override
-  bool shouldRepaint(_ScanRingPainter old) =>
-      old.progress != progress || old.opacity != opacity;
-}
-
-class _CircuitPainter extends CustomPainter {
-  final double progress;
-  final Color color;
-  const _CircuitPainter({required this.progress, required this.color});
-
-  @override
-  void paint(Canvas canvas, Size size) {
-    final paint = Paint()
-      ..color = color.withOpacity(0.25)
-      ..strokeWidth = 0.8
-      ..style = PaintingStyle.stroke;
-
-    final cx = size.width / 2;
-    final cy = size.height / 2;
-
-    // Horizontal lines
-    canvas.drawLine(Offset(cx - 40, cy - 20), Offset(cx - 20, cy - 20), paint);
-    canvas.drawLine(Offset(cx + 20, cy - 20), Offset(cx + 40, cy - 20), paint);
-    canvas.drawLine(Offset(cx - 40, cy + 20), Offset(cx - 20, cy + 20), paint);
-    canvas.drawLine(Offset(cx + 20, cy + 20), Offset(cx + 40, cy + 20), paint);
-
-    // Nodes
-    final nodePaint = Paint()
-      ..color = color
-          .withOpacity(0.4 * (0.5 + 0.5 * math.sin(progress * 2 * math.pi)))
-      ..style = PaintingStyle.fill;
-
-    for (final pos in [
-      Offset(cx - 40, cy - 20),
-      Offset(cx + 40, cy - 20),
-      Offset(cx - 40, cy + 20),
-      Offset(cx + 40, cy + 20),
-    ]) {
-      canvas.drawCircle(pos, 2.5, nodePaint);
-    }
-  }
-
-  @override
-  bool shouldRepaint(_CircuitPainter old) => old.progress != progress;
-}
-
-class _GridPainter extends CustomPainter {
-  @override
-  void paint(Canvas canvas, Size size) {
-    final paint = Paint()
-      ..color = const Color(0xFF00C896)
-      ..strokeWidth = 0.5;
-
-    const spacing = 40.0;
-    for (double x = 0; x < size.width; x += spacing) {
-      canvas.drawLine(Offset(x, 0), Offset(x, size.height), paint);
-    }
-    for (double y = 0; y < size.height; y += spacing) {
-      canvas.drawLine(Offset(0, y), Offset(size.width, y), paint);
-    }
-  }
-
-  @override
-  bool shouldRepaint(_GridPainter old) => false;
 }

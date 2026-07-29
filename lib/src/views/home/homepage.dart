@@ -1,279 +1,310 @@
+import 'package:MicroMinds/Recipe.dart';
 import 'package:flutter/material.dart';
-import 'package:MicroMinds/src/utils/theme/theme.dart';
 
-class HomeScreen extends StatefulWidget {
-  const HomeScreen({super.key});
+class HomePage extends StatelessWidget {
+  const HomePage({super.key});
 
-  @override
-  State<HomeScreen> createState() => _HomeScreenState();
-}
+  final Color background = const Color(0xff08090D);
+  final Color cardColor = const Color(0xff15171D);
+  final Color orange = const Color(0xffff6b4a);
+  final Color purple = const Color(0xff9b5cff);
 
-class _HomeScreenState extends State<HomeScreen> {
-  int _selectedIndex = 0;
+  String getGreeting() {
+    final hour = DateTime.now().hour;
 
-  void _onItemTapped(int index) {
-    setState(() {
-      _selectedIndex = index;
-    });
+    if (hour < 12) {
+      return "Good Morning";
+    } else if (hour >= 12 && hour < 18) {
+      return "Good Afternoon";
+    } else {
+      return "Good Evening";
+    }
   }
 
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      backgroundColor: AppTheme.bg1,
-      appBar: AppBar(
-        title: const Text('MacroMind'),
-        centerTitle: true,
-        backgroundColor: AppTheme.bg2,
-        elevation: 0,
-      ),
-      body: SingleChildScrollView(
-        padding: const EdgeInsets.all(16),
-        child: Column(
-          crossAxisAlignment: CrossAxisAlignment.start,
-          children: [
-            // Welcome Card
-            Card(
-              child: Padding(
-                padding: const EdgeInsets.all(16),
-                child: Column(
-                  crossAxisAlignment: CrossAxisAlignment.start,
+      backgroundColor: background,
+      body: SafeArea(
+        child: SingleChildScrollView(
+          padding: const EdgeInsets.symmetric(horizontal: 20),
+          child: Column(
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: [
+              const SizedBox(height: 20),
+
+              /// HEADER
+
+              Row(
+                mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                children: [
+                  Column(
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: [
+                      Text(
+                        getGreeting(),
+                        style: TextStyle(
+                          color: Colors.grey.shade400,
+                          fontSize: 15,
+                        ),
+                      ),
+                      const SizedBox(height: 4),
+                      const Text(
+                        "Muhammad 👋",
+                        style: TextStyle(
+                          color: Colors.white,
+                          fontSize: 25,
+                          fontWeight: FontWeight.bold,
+                        ),
+                      )
+                    ],
+                  ),
+                  Row(
+                    children: [
+                      Container(
+                        padding: const EdgeInsets.symmetric(
+                          horizontal: 12,
+                          vertical: 8,
+                        ),
+                        decoration: BoxDecoration(
+                          color: purple.withOpacity(.2),
+                          borderRadius: BorderRadius.circular(20),
+                        ),
+                        child: Row(children: [
+                          Icon(
+                            Icons.stars,
+                            color: purple,
+                            size: 18,
+                          ),
+                          const SizedBox(width: 5),
+                          const Text(
+                            "420",
+                            style: TextStyle(
+                              color: Colors.white,
+                              fontWeight: FontWeight.bold,
+                            ),
+                          )
+                        ]),
+                      ),
+                      const SizedBox(width: 12),
+                      Container(
+                        height: 42,
+                        width: 42,
+                        decoration: BoxDecoration(
+                          color: cardColor,
+                          shape: BoxShape.circle,
+                        ),
+                        child: const Icon(
+                          Icons.notifications_none,
+                          color: Colors.white,
+                        ),
+                      )
+                    ],
+                  )
+                ],
+              ),
+
+              const SizedBox(height: 25),
+
+              /// SEARCH BAR
+
+              Container(
+                height: 52,
+                decoration: BoxDecoration(
+                  color: cardColor,
+                  borderRadius: BorderRadius.circular(18),
+                ),
+                child: Row(
                   children: [
-                    Text(
-                      'Welcome Back!',
-                      style: AppTheme.headingMedium,
+                    const SizedBox(width: 15),
+                    Icon(
+                      Icons.search,
+                      color: Colors.grey,
                     ),
-                    const SizedBox(height: 8),
-                    Text(
-                      'Track your fitness and nutrition goals',
-                      style: AppTheme.bodySmall,
+                    const SizedBox(width: 10),
+                    const Expanded(
+                      child: Text(
+                        "Search recipes, ingredients...",
+                        style: TextStyle(
+                          color: Colors.grey,
+                          fontSize: 14,
+                        ),
+                      ),
                     ),
+                    Container(
+                      margin: const EdgeInsets.all(6),
+                      height: 40,
+                      width: 40,
+                      decoration: BoxDecoration(
+                        gradient: LinearGradient(colors: [
+                          orange,
+                          purple,
+                        ]),
+                        borderRadius: BorderRadius.circular(14),
+                      ),
+                      child: const Icon(
+                        Icons.qr_code_scanner,
+                        color: Colors.white,
+                      ),
+                    )
                   ],
                 ),
               ),
-            ),
-            const SizedBox(height: 24),
 
-            // Quick Stats Section
-            Text(
-              'Today\'s Stats',
-              style: AppTheme.headingSmall,
-            ),
-            const SizedBox(height: 12),
+              const SizedBox(height: 25),
 
-            // Stats Row 1
-            Row(
-              children: [
-                Expanded(
-                  child: _StatCard(
-                    icon: Icons.local_fire_department,
-                    label: 'Calories',
-                    value: '1850',
-                    unit: 'kcal',
-                    color: const Color(0xFFFF6B6B),
+              /// PANTRY AI CARD
+
+              Container(
+                padding: const EdgeInsets.all(18),
+                decoration: BoxDecoration(
+                  color: cardColor,
+                  borderRadius: BorderRadius.circular(25),
+                ),
+                child: Row(
+                  children: [
+                    Expanded(
+                      child: Column(
+                        crossAxisAlignment: CrossAxisAlignment.start,
+                        children: [
+                          const Text(
+                            "Scan your pantry",
+                            style: TextStyle(
+                              color: Colors.white,
+                              fontSize: 18,
+                              fontWeight: FontWeight.bold,
+                            ),
+                          ),
+                          const SizedBox(height: 5),
+                          Text(
+                            "Get recipe ideas\nwith what you have",
+                            style: TextStyle(
+                              color: Colors.grey.shade400,
+                              fontSize: 13,
+                            ),
+                          ),
+                          const SizedBox(height: 15),
+                          ElevatedButton(
+                            onPressed: () {},
+                            style: ElevatedButton.styleFrom(
+                                backgroundColor: orange,
+                                shape: RoundedRectangleBorder(
+                                  borderRadius: BorderRadius.circular(15),
+                                )),
+                            child: const Text(
+                              "Scan Now",
+                              style: TextStyle(
+                                color: Colors.white,
+                              ),
+                            ),
+                          )
+                        ],
+                      ),
+                    ),
+                    Container(
+                      height: 90,
+                      width: 90,
+                      decoration: BoxDecoration(
+                        color: Colors.black26,
+                        borderRadius: BorderRadius.circular(20),
+                      ),
+                      child: const Center(
+                        child: Text(
+                          "🥕🍅",
+                          style: TextStyle(
+                            fontSize: 35,
+                          ),
+                        ),
+                      ),
+                    )
+                  ],
+                ),
+              ),
+
+              const SizedBox(height: 30),
+
+              /// RECIPE OF DAY TITLE
+
+              Row(
+                mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                children: [
+                  const Text(
+                    "Recipe of the Day",
+                    style: TextStyle(
+                      color: Colors.white,
+                      fontSize: 18,
+                      fontWeight: FontWeight.bold,
+                    ),
+                  ),
+                  Text(
+                    "See all",
+                    style: TextStyle(
+                      color: purple,
+                    ),
+                  )
+                ],
+              ),
+
+              const SizedBox(height: 15),
+
+              /// RECIPE CARD
+
+              GestureDetector(
+                onTap: () {
+                  // Navigator.push(
+                  //     context,
+                  //     MaterialPageRoute(
+                  //         builder: (context) => RecipeDetailsScre(
+
+                  //         )));
+                },
+                child: Container(
+                  height: 220,
+                  decoration: BoxDecoration(
+                    borderRadius: BorderRadius.circular(25),
+                    image: const DecorationImage(
+                      image: NetworkImage(
+                          "https://images.unsplash.com/photo-1555949258-eb67b1ef0ceb"),
+                      fit: BoxFit.cover,
+                    ),
+                  ),
+                  child: Container(
+                    padding: const EdgeInsets.all(18),
+                    decoration: BoxDecoration(
+                        borderRadius: BorderRadius.circular(25),
+                        gradient: LinearGradient(
+                            begin: Alignment.topCenter,
+                            end: Alignment.bottomCenter,
+                            colors: [
+                              Colors.transparent,
+                              Colors.black87,
+                            ])),
+                    child: Column(
+                      mainAxisAlignment: MainAxisAlignment.end,
+                      crossAxisAlignment: CrossAxisAlignment.start,
+                      children: [
+                        const Text(
+                          "Spicy Garlic Butter\nShrimp Pasta",
+                          style: TextStyle(
+                            color: Colors.white,
+                            fontSize: 20,
+                            fontWeight: FontWeight.bold,
+                          ),
+                        ),
+                        const SizedBox(height: 8),
+                        const Text(
+                          "⭐ 4.8     ⏱ 32 min",
+                          style: TextStyle(
+                            color: Colors.white,
+                          ),
+                        )
+                      ],
+                    ),
                   ),
                 ),
-                const SizedBox(width: 12),
-                Expanded(
-                  child: _StatCard(
-                    icon: Icons.water_drop,
-                    label: 'Water',
-                    value: '6',
-                    unit: 'glasses',
-                    color: const Color(0xFF3B82F6),
-                  ),
-                ),
-              ],
-            ),
-            const SizedBox(height: 12),
-
-            // Stats Row 2
-            Row(
-              children: [
-                Expanded(
-                  child: _StatCard(
-                    icon: Icons.directions_run,
-                    label: 'Steps',
-                    value: '8,234',
-                    unit: 'steps',
-                    color: const Color(0xFF00C896),
-                  ),
-                ),
-                const SizedBox(width: 12),
-                Expanded(
-                  child: _StatCard(
-                    icon: Icons.fitness_center,
-                    label: 'Workouts',
-                    value: '1',
-                    unit: 'completed',
-                    color: const Color(0xFFFFA500),
-                  ),
-                ),
-              ],
-            ),
-            const SizedBox(height: 24),
-
-            // Quick Actions
-            Text(
-              'Quick Actions',
-              style: AppTheme.headingSmall,
-            ),
-            const SizedBox(height: 12),
-
-            GridView.count(
-              crossAxisCount: 2,
-              crossAxisSpacing: 12,
-              mainAxisSpacing: 12,
-              shrinkWrap: true,
-              physics: const NeverScrollableScrollPhysics(),
-              childAspectRatio: 1.1,
-              children: [
-                _QuickActionCard(
-                  icon: Icons.breakfast_dining,
-                  label: 'Log Meal',
-                  onTap: () {},
-                ),
-                _QuickActionCard(
-                  icon: Icons.sports_gymnastics,
-                  label: 'Log Workout',
-                  onTap: () {},
-                ),
-                _QuickActionCard(
-                  icon: Icons.receipt_long,
-                  label: 'View Recipes',
-                  onTap: () {},
-                ),
-                _QuickActionCard(
-                  icon: Icons.calculate,
-                  label: 'Calculator',
-                  onTap: () {},
-                ),
-              ],
-            ),
-            const SizedBox(height: 24),
-            if (_selectedIndex == 0) ...[
-              const SizedBox.shrink(),
-            ] else if (_selectedIndex == 1) ...[
-              _sectionPlaceholder('Diary', 'Open your food and workout diary.'),
-            ] else if (_selectedIndex == 2) ...[
-              _sectionPlaceholder(
-                  'Analytics', 'See charts and progress metrics.'),
-            ] else ...[
-              _sectionPlaceholder(
-                  'Profile', 'Manage account settings and goals.'),
+              ),
             ],
-          ],
-        ),
-      ),
-      bottomNavigationBar: BottomNavigationBar(
-        currentIndex: _selectedIndex,
-        onTap: _onItemTapped,
-        backgroundColor: AppTheme.bg2,
-        selectedItemColor: AppTheme.primaryColor,
-        unselectedItemColor: AppTheme.textSecondary,
-        showUnselectedLabels: true,
-        type: BottomNavigationBarType.fixed,
-        items: const [
-          BottomNavigationBarItem(
-            icon: Icon(Icons.home_outlined),
-            activeIcon: Icon(Icons.home),
-            label: 'Home',
           ),
-          BottomNavigationBarItem(
-            icon: Icon(Icons.book_outlined),
-            activeIcon: Icon(Icons.book),
-            label: 'Diary',
-          ),
-          BottomNavigationBarItem(
-            icon: Icon(Icons.insights_outlined),
-            activeIcon: Icon(Icons.insights),
-            label: 'Analytics',
-          ),
-          BottomNavigationBarItem(
-            icon: Icon(Icons.person_outline),
-            activeIcon: Icon(Icons.person),
-            label: 'Profile',
-          ),
-        ],
-      ),
-    );
-  }
-
-  Widget _sectionPlaceholder(String title, String subtitle) {
-    return Card(
-      child: Padding(
-        padding: const EdgeInsets.all(18),
-        child: Column(
-          crossAxisAlignment: CrossAxisAlignment.start,
-          children: [
-            Text(title, style: AppTheme.headingSmall),
-            const SizedBox(height: 8),
-            Text(subtitle, style: AppTheme.bodyMedium),
-          ],
-        ),
-      ),
-    );
-  }
-}
-
-class _StatCard extends StatelessWidget {
-  final IconData icon;
-  final String label;
-  final String value;
-  final String unit;
-  final Color color;
-
-  const _StatCard({
-    required this.icon,
-    required this.label,
-    required this.value,
-    required this.unit,
-    required this.color,
-  });
-
-  @override
-  Widget build(BuildContext context) {
-    return Card(
-      child: Padding(
-        padding: const EdgeInsets.all(12),
-        child: Column(
-          children: [
-            Icon(icon, color: color, size: 28),
-            const SizedBox(height: 8),
-            Text(label, style: AppTheme.bodySmall),
-            const SizedBox(height: 4),
-            Text(value, style: AppTheme.headingSmall),
-            Text(unit, style: AppTheme.caption),
-          ],
-        ),
-      ),
-    );
-  }
-}
-
-class _QuickActionCard extends StatelessWidget {
-  final IconData icon;
-  final String label;
-  final VoidCallback onTap;
-
-  const _QuickActionCard({
-    required this.icon,
-    required this.label,
-    required this.onTap,
-  });
-
-  @override
-  Widget build(BuildContext context) {
-    return GestureDetector(
-      onTap: onTap,
-      child: Card(
-        child: Column(
-          mainAxisAlignment: MainAxisAlignment.center,
-          children: [
-            Icon(icon, color: AppTheme.primaryColor, size: 32),
-            const SizedBox(height: 8),
-            Text(label, style: AppTheme.bodySmall, textAlign: TextAlign.center),
-          ],
         ),
       ),
     );
