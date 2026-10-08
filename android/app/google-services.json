@@ -1,0 +1,29 @@
+{
+  "project_info": {
+    "project_number": "931269788220",
+    "project_id": "foodrecipe-c1c33",
+    "storage_bucket": "foodrecipe-c1c33.firebasestorage.app"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:931269788220:android:4ce57346a5d1ec018a7939",
+        "android_client_info": {
+          "package_name": "com.tosiq.MicroMinds"
+        }
+      },
+      "oauth_client": [],
+      "api_key": [
+        {
+          "current_key": "AIzaSyDL5e-Dy5CCg0mjQRzqNm8RV_TvUDxLOYM"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": []
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}

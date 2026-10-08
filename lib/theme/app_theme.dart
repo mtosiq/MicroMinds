@@ -1,30 +1,59 @@
 import 'package:flutter/material.dart';
 
+class AppColors {
+  AppColors._();
+
+  static const background = Color(0xff08090D);
+  static const authBackground = Color(0xff07080C);
+  static const card = Color(0xff15171D);
+  static const orange = Color(0xffff6b4a);
+  static const purple = Color(0xff9b5cff);
+  static const green = Color(0xff42d392);
+  static const blue = Color(0xff5ca9ff);
+  static const yellow = Color(0xffffc107);
+  static const pink = Color(0xffff5c8a);
+  static const muted = Color(0xff9ca3af);
+  static const darkPanel = Color(0xff1d1825);
+  static const deepPanel = Color(0xff17101A);
+  static const deepBackground = Color(0xff0B0C12);
+  static const border = Color(0xff252731);
+  static const indigo = Color(0xff6c8cff);
+}
+
+mixin ThemeColors {
+  Color get background => AppColors.background;
+  Color get cardColor => AppColors.card;
+  Color get orange => AppColors.orange;
+  Color get purple => AppColors.purple;
+  Color get green => AppColors.green;
+  Color get blue => AppColors.blue;
+}
+
 class AppTheme {
   // Private constructor to prevent instantiation
   AppTheme._();
 
   // ==================== COLORS ====================
   // Backgrounds
-  static const Color bg1 = Color(0xFF141414); // Very dark background
-  static const Color bg2 = Color(0xFF071220);
-  static const Color button = Color(0xff2a2a2a); // Dark secondary background
+  static const Color bg1 = AppColors.background;
+  static const Color bg2 = AppColors.card;
+  static const Color button = AppColors.card;
 
   // Primary Colors
-  static const Color primaryColor = Color(0xFF00C896); // Green accent
-  static const Color blueColor = Color(0xFF0095FF); // Blue
-  static const Color orangeColor = Color(0xFFFF6B35); // Orange
+  static const Color primaryColor = AppColors.orange;
+  static const Color blueColor = AppColors.blue;
+  static const Color orangeColor = AppColors.orange;
 
   // Text Colors - LIGHT for dark backgrounds!
-  static const Color textPrimary = Color(0xFFF0F8FF); // Light white/Alice blue
-  static const Color textSecondary = Color(0xFF7A9BB5); // Muted gray-blue
+  static const Color textPrimary = Colors.white;
+  static const Color textSecondary = AppColors.muted;
 
   // Additional Colors
-  static const Color borderColor = Color(0xFF1A2332);
-  static const Color errorColor = Color(0xFFFF6B35); // Orange for errors
-  static const Color successColor = Color(0xFF00C896); // Green for success
-  static const Color warningColor = Color(0xFFFF6B35); // Orange for warnings
-  static const Color infoColor = Color(0xFF0095FF); // Blue for info
+  static const Color borderColor = Color(0xff252731);
+  static const Color errorColor = AppColors.pink;
+  static const Color successColor = AppColors.green;
+  static const Color warningColor = AppColors.yellow;
+  static const Color infoColor = AppColors.blue;
 
   // ==================== TEXT STYLES ====================
   static const TextStyle headingLarge = TextStyle(
@@ -82,7 +111,7 @@ class AppTheme {
   );
 
   // ==================== THEME DATA ====================
-  static ThemeData get lightTheme {
+  static ThemeData get darkTheme {
     return ThemeData(
       useMaterial3: true,
       brightness: Brightness.dark,
@@ -245,4 +274,6 @@ class AppTheme {
       ),
     );
   }
+
+  static ThemeData get lightTheme => darkTheme;
 }

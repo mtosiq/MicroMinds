@@ -1,30 +1,39 @@
 import 'package:flutter/material.dart';
+import 'package:MicroMinds/theme/app_theme.dart';
+import 'package:firebase_auth/firebase_auth.dart';
 import 'package:MicroMinds/src/views/Navigation_Screen.dart';
+import 'package:MicroMinds/src/views/Authentication%20Screens/loginScreen.dart';
 
 class SplashScreen extends StatefulWidget {
   const SplashScreen({super.key});
+
+  static const String loginKey = "login";
 
   @override
   State<SplashScreen> createState() => _SplashScreenState();
 }
 
 class _SplashScreenState extends State<SplashScreen>
-    with TickerProviderStateMixin {
+    with TickerProviderStateMixin, ThemeColors {
   late AnimationController logoController;
-  late AnimationController textController;
+  late AnimationController contentController;
   late AnimationController pulseController;
+  late AnimationController progressController;
 
   late Animation<double> logoScale;
-  late Animation<double> textFade;
-  late Animation<double> pulse;
+  late Animation<double> logoRotation;
+  late Animation<double> fadeAnimation;
+  late Animation<double> slideAnimation;
+  late Animation<double> pulseAnimation;
+  late Animation<double> progressAnimation;
 
-  static const Color background = Color(0xff050507);
+  // ============================================================
+  // COLORS
+  // ============================================================
 
-  static const Color orange = Color(0xffff6b4a);
-
-  static const Color purple = Color(0xff9b5cff);
-
-  static const Color green = Color(0xff35D07F);
+  // ============================================================
+  // INIT
+  // ============================================================
 
   @override
   void initState() {
@@ -35,18 +44,23 @@ class _SplashScreenState extends State<SplashScreen>
       duration: const Duration(milliseconds: 1200),
     );
 
-    textController = AnimationController(
+    contentController = AnimationController(
       vsync: this,
-      duration: const Duration(milliseconds: 1000),
+      duration: const Duration(milliseconds: 900),
     );
 
     pulseController = AnimationController(
       vsync: this,
-      duration: const Duration(seconds: 2),
+      duration: const Duration(milliseconds: 1800),
     )..repeat(reverse: true);
 
+    progressController = AnimationController(
+      vsync: this,
+      duration: const Duration(milliseconds: 2600),
+    );
+
     logoScale = Tween<double>(
-      begin: 0,
+      begin: 0.35,
       end: 1,
     ).animate(
       CurvedAnimation(
@@ -55,19 +69,39 @@ class _SplashScreenState extends State<SplashScreen>
       ),
     );
 
-    textFade = Tween<double>(
+    logoRotation = Tween<double>(
+      begin: -0.08,
+      end: 0,
+    ).animate(
+      CurvedAnimation(
+        parent: logoController,
+        curve: Curves.easeOutBack,
+      ),
+    );
+
+    fadeAnimation = Tween<double>(
       begin: 0,
       end: 1,
     ).animate(
       CurvedAnimation(
-        parent: textController,
-        curve: Curves.easeIn,
+        parent: contentController,
+        curve: Curves.easeOut,
       ),
     );
 
-    pulse = Tween<double>(
-      begin: .95,
-      end: 1.08,
+    slideAnimation = Tween<double>(
+      begin: 25,
+      end: 0,
+    ).animate(
+      CurvedAnimation(
+        parent: contentController,
+        curve: Curves.easeOutCubic,
+      ),
+    );
+
+    pulseAnimation = Tween<double>(
+      begin: 0.97,
+      end: 1.04,
     ).animate(
       CurvedAnimation(
         parent: pulseController,
@@ -75,16 +109,36 @@ class _SplashScreenState extends State<SplashScreen>
       ),
     );
 
+    progressAnimation = Tween<double>(
+      begin: 0,
+      end: 1,
+    ).animate(
+      CurvedAnimation(
+        parent: progressController,
+        curve: Curves.easeInOut,
+      ),
+    );
+
     startSplash();
   }
+
+  // ============================================================
+  // SPLASH FLOW
+  // ============================================================
 
   Future<void> startSplash() async {
     await logoController.forward();
 
-    await textController.forward();
+    await Future.delayed(
+      const Duration(milliseconds: 250),
+    );
+
+    await contentController.forward();
+
+    progressController.forward();
 
     await Future.delayed(
-      const Duration(seconds: 2),
+      const Duration(milliseconds: 2700),
     );
 
     if (!mounted) return;
@@ -92,175 +146,391 @@ class _SplashScreenState extends State<SplashScreen>
     Navigator.pushReplacement(
       context,
       MaterialPageRoute(
-        builder: (context) => const MainNavigation(),
+        builder: (context) => FirebaseAuth.instance.currentUser == null
+            ? const LoginScreen()
+            : const MainNavigation(),
       ),
     );
   }
 
+  // ============================================================
+  // DISPOSE
+  // ============================================================
+
   @override
   void dispose() {
     logoController.dispose();
-
-    textController.dispose();
-
+    contentController.dispose();
     pulseController.dispose();
+    progressController.dispose();
 
     super.dispose();
   }
 
+  // ============================================================
+  // BUILD
+  // ============================================================
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      backgroundColor: background,
+      backgroundColor: Theme.of(context).scaffoldBackgroundColor,
       body: AnimatedBuilder(
         animation: Listenable.merge([
           logoController,
-          textController,
+          contentController,
           pulseController,
+          progressController,
         ]),
         builder: (context, child) {
           return Stack(
             children: [
-              // Background
+              // ========================================================
+              // BACKGROUND
+              // ========================================================
 
               Container(
                 decoration: const BoxDecoration(
-                  gradient: RadialGradient(
-                    center: Alignment.topCenter,
-                    radius: 1.3,
+                  gradient: LinearGradient(
+                    begin: Alignment.topLeft,
+                    end: Alignment.bottomRight,
                     colors: [
-                      Color(0xff24120D),
-                      Color(0xff15101F),
-                      Color(0xff050507),
+                      AppColors.deepPanel,
+                      AppColors.deepBackground,
+                      AppColors.authBackground,
                     ],
                   ),
                 ),
               ),
 
-              // Glow Effects
+              // ========================================================
+              // ORANGE GLOW
+              // ========================================================
 
               Positioned(
-                top: -100,
-                left: -80,
+                top: -160,
+                left: -120,
                 child: glow(
                   orange,
-                  260,
+                  360,
                 ),
               ),
 
+              // ========================================================
+              // PURPLE GLOW
+              // ========================================================
+
               Positioned(
-                right: -100,
-                top: 150,
+                top: 250,
+                right: -170,
                 child: glow(
                   purple,
-                  280,
+                  380,
+                ),
+              ),
+
+              // ========================================================
+              // GREEN GLOW
+              // ========================================================
+
+              Positioned(
+                bottom: -180,
+                left: -80,
+                child: glow(
+                  green,
+                  330,
+                ),
+              ),
+
+              // ========================================================
+              // DECORATIVE CIRCLES
+              // ========================================================
+
+              Positioned(
+                top: 100,
+                right: 35,
+                child: decorativeCircle(
+                  10,
+                  purple,
                 ),
               ),
 
               Positioned(
-                bottom: -100,
-                left: 80,
-                child: glow(
-                  green,
-                  220,
+                top: 190,
+                left: 35,
+                child: decorativeCircle(
+                  7,
+                  orange,
                 ),
               ),
 
-              // Floating Food
-
-              const Positioned(
-                top: 150,
-                left: 45,
-                child: FoodBubble(
-                  emoji: "🥕",
-                ),
-              ),
-
-              const Positioned(
-                top: 240,
+              Positioned(
+                bottom: 170,
                 right: 45,
-                child: FoodBubble(
-                  emoji: "🍅",
+                child: decorativeCircle(
+                  8,
+                  green,
                 ),
               ),
 
-              const Positioned(
-                bottom: 220,
-                left: 60,
-                child: FoodBubble(
-                  emoji: "🥑",
-                ),
-              ),
+              // ========================================================
+              // MAIN CONTENT
+              // ========================================================
 
               Center(
                 child: Column(
                   mainAxisAlignment: MainAxisAlignment.center,
                   children: [
-                    Transform.scale(
-                      scale: logoScale.value * pulse.value,
-                      child: logo(),
-                    ),
-                    const SizedBox(
-                      height: 30,
-                    ),
-                    FadeTransition(
-                      opacity: textFade,
-                      child: const Text(
-                        "ChefAI",
-                        style: TextStyle(
-                          color: Colors.white,
-                          fontSize: 48,
-                          fontWeight: FontWeight.w900,
-                          letterSpacing: 1,
+                    // ====================================================
+                    // LOGO
+                    // ====================================================
+
+                    Transform.translate(
+                      offset: Offset(
+                        0,
+                        slideAnimation.value,
+                      ),
+                      child: Transform.rotate(
+                        angle: logoRotation.value,
+                        child: Transform.scale(
+                          scale: logoScale.value * pulseAnimation.value,
+                          child: buildLogo(),
                         ),
                       ),
                     ),
-                    const SizedBox(
-                      height: 12,
-                    ),
+
+                    const SizedBox(height: 30),
+
+                    // ====================================================
+                    // APP NAME
+                    // ====================================================
+
                     FadeTransition(
-                      opacity: textFade,
+                      opacity: fadeAnimation,
+                      child: Transform.translate(
+                        offset: Offset(
+                          0,
+                          slideAnimation.value,
+                        ),
+                        child: const Text(
+                          "NutriChef AI",
+                          style: TextStyle(
+                            color: Colors.white,
+                            fontSize: 38,
+                            fontWeight: FontWeight.w900,
+                            letterSpacing: -1,
+                          ),
+                        ),
+                      ),
+                    ),
+
+                    const SizedBox(height: 8),
+
+                    // ====================================================
+                    // TAGLINE
+                    // ====================================================
+
+                    FadeTransition(
+                      opacity: fadeAnimation,
                       child: const Text(
-                        "Your Personal AI Cooking Assistant",
+                        "Eat smart. Train better. Live healthier.",
+                        textAlign: TextAlign.center,
                         style: TextStyle(
-                          color: Colors.grey,
+                          color: Colors.white54,
                           fontSize: 13,
-                          letterSpacing: 1.5,
+                          letterSpacing: .4,
                         ),
                       ),
                     ),
-                    const SizedBox(
-                      height: 35,
-                    ),
+
+                    const SizedBox(height: 28),
+
+                    // ====================================================
+                    // FEATURE PILLS
+                    // ====================================================
+
                     FadeTransition(
-                      opacity: textFade,
+                      opacity: fadeAnimation,
                       child: Row(
                         mainAxisSize: MainAxisSize.min,
                         children: [
-                          badge("🍽 Recipes", orange),
-                          const SizedBox(width: 8),
-                          badge("📸 Scan", purple),
-                          const SizedBox(width: 8),
-                          badge("🥗 Healthy", green),
+                          featurePill(
+                            icon: Icons.restaurant_rounded,
+                            text: "Recipes",
+                            color: orange,
+                          ),
+                          const SizedBox(width: 7),
+                          featurePill(
+                            icon: Icons.local_fire_department_rounded,
+                            text: "Nutrition",
+                            color: green,
+                          ),
+                          const SizedBox(width: 7),
+                          featurePill(
+                            icon: Icons.fitness_center_rounded,
+                            text: "Fitness",
+                            color: purple,
+                          ),
                         ],
                       ),
                     ),
-                    const SizedBox(
-                      height: 50,
-                    ),
+
+                    const SizedBox(height: 45),
+
+                    // ====================================================
+                    // AI STATUS CARD
+                    // ====================================================
+
                     FadeTransition(
-                      opacity: textFade,
-                      child: const Text(
-                        "AI Chef is preparing ideas...",
-                        style: TextStyle(
-                          color: Colors.grey,
-                          fontSize: 12,
+                      opacity: fadeAnimation,
+                      child: Container(
+                        width: 270,
+                        padding: const EdgeInsets.all(14),
+                        decoration: BoxDecoration(
+                          color: cardColor.withOpacity(.9),
+                          borderRadius: BorderRadius.circular(18),
+                          border: Border.all(
+                            color: Colors.white.withOpacity(.06),
+                          ),
+                        ),
+                        child: Row(
+                          children: [
+                            Container(
+                              height: 38,
+                              width: 38,
+                              decoration: BoxDecoration(
+                                gradient: LinearGradient(
+                                  colors: [
+                                    orange,
+                                    purple,
+                                  ],
+                                ),
+                                borderRadius: BorderRadius.circular(12),
+                              ),
+                              child: const Icon(
+                                Icons.auto_awesome,
+                                color: Colors.white,
+                                size: 19,
+                              ),
+                            ),
+                            const SizedBox(width: 11),
+                            Expanded(
+                              child: Column(
+                                crossAxisAlignment: CrossAxisAlignment.start,
+                                children: [
+                                  const Text(
+                                    "AI Nutrition Assistant",
+                                    style: TextStyle(
+                                      color: Colors.white,
+                                      fontSize: 12,
+                                      fontWeight: FontWeight.bold,
+                                    ),
+                                  ),
+                                  const SizedBox(height: 4),
+                                  Text(
+                                    "Preparing your experience...",
+                                    style: TextStyle(
+                                      color: Colors.grey.shade500,
+                                      fontSize: 10,
+                                    ),
+                                  ),
+                                ],
+                              ),
+                            ),
+                            SizedBox(
+                              height: 18,
+                              width: 18,
+                              child: CircularProgressIndicator(
+                                strokeWidth: 2,
+                                valueColor: AlwaysStoppedAnimation<Color>(
+                                  orange,
+                                ),
+                              ),
+                            ),
+                          ],
                         ),
                       ),
-                    )
+                    ),
+
+                    const SizedBox(height: 25),
+
+                    // ====================================================
+                    // PROGRESS BAR
+                    // ====================================================
+
+                    FadeTransition(
+                      opacity: fadeAnimation,
+                      child: SizedBox(
+                        width: 180,
+                        child: Column(
+                          children: [
+                            Container(
+                              height: 3,
+                              decoration: BoxDecoration(
+                                color: Colors.white.withOpacity(.07),
+                                borderRadius: BorderRadius.circular(
+                                  10,
+                                ),
+                              ),
+                              child: Align(
+                                alignment: Alignment.centerLeft,
+                                child: FractionallySizedBox(
+                                  widthFactor: progressAnimation.value,
+                                  child: Container(
+                                    decoration: BoxDecoration(
+                                      gradient: LinearGradient(
+                                        colors: [
+                                          orange,
+                                          purple,
+                                        ],
+                                      ),
+                                      borderRadius: BorderRadius.circular(
+                                        10,
+                                      ),
+                                    ),
+                                  ),
+                                ),
+                              ),
+                            ),
+                            const SizedBox(height: 10),
+                            const Text(
+                              "Personalizing your journey",
+                              style: TextStyle(
+                                color: Colors.white38,
+                                fontSize: 9,
+                                letterSpacing: .5,
+                              ),
+                            ),
+                          ],
+                        ),
+                      ),
+                    ),
                   ],
                 ),
-              )
+              ),
+
+              // ========================================================
+              // VERSION
+              // ========================================================
+
+              Positioned(
+                bottom: 28,
+                left: 0,
+                right: 0,
+                child: FadeTransition(
+                  opacity: fadeAnimation,
+                  child: const Text(
+                    "SMART NUTRITION • AI • FITNESS",
+                    textAlign: TextAlign.center,
+                    style: TextStyle(
+                      color: Colors.white24,
+                      fontSize: 8,
+                      letterSpacing: 1.8,
+                      fontWeight: FontWeight.w600,
+                    ),
+                  ),
+                ),
+              ),
             ],
           );
         },
@@ -268,13 +538,19 @@ class _SplashScreenState extends State<SplashScreen>
     );
   }
 
-  Widget logo() {
+  // ============================================================
+  // LOGO
+  // ============================================================
+
+  Widget buildLogo() {
     return Container(
-      height: 150,
-      width: 150,
+      height: 145,
+      width: 145,
       decoration: BoxDecoration(
         shape: BoxShape.circle,
-        gradient: const LinearGradient(
+        gradient: LinearGradient(
+          begin: Alignment.topLeft,
+          end: Alignment.bottomRight,
           colors: [
             orange,
             purple,
@@ -282,55 +558,130 @@ class _SplashScreenState extends State<SplashScreen>
         ),
         boxShadow: [
           BoxShadow(
-            color: orange.withOpacity(.4),
+            color: orange.withOpacity(.25),
             blurRadius: 45,
-            spreadRadius: 8,
-          )
+            spreadRadius: 5,
+          ),
+          BoxShadow(
+            color: purple.withOpacity(.18),
+            blurRadius: 70,
+            spreadRadius: 10,
+          ),
         ],
       ),
       child: Container(
         margin: const EdgeInsets.all(6),
-        decoration: const BoxDecoration(
-          color: Color(0xff15171D),
+        decoration: BoxDecoration(
+          color: cardColor,
           shape: BoxShape.circle,
         ),
-        child: const Center(
-          child: Text(
-            "👨‍🍳",
-            style: TextStyle(
-              fontSize: 65,
+        child: Stack(
+          alignment: Alignment.center,
+          children: [
+            // INNER GLOW
+
+            Container(
+              height: 100,
+              width: 100,
+              decoration: BoxDecoration(
+                shape: BoxShape.circle,
+                gradient: RadialGradient(
+                  colors: [
+                    orange.withOpacity(.15),
+                    Colors.transparent,
+                  ],
+                ),
+              ),
             ),
-          ),
+
+            // MAIN ICON
+
+            const Icon(
+              Icons.restaurant_rounded,
+              color: Colors.white,
+              size: 57,
+            ),
+
+            // FITNESS BADGE
+
+            Positioned(
+              right: 17,
+              bottom: 20,
+              child: Container(
+                height: 32,
+                width: 32,
+                decoration: BoxDecoration(
+                  color: green,
+                  shape: BoxShape.circle,
+                  border: Border.all(
+                    color: cardColor,
+                    width: 4,
+                  ),
+                ),
+                child: const Icon(
+                  Icons.fitness_center_rounded,
+                  color: Colors.white,
+                  size: 14,
+                ),
+              ),
+            ),
+          ],
         ),
       ),
     );
   }
 
-  Widget badge(String text, Color color) {
+  // ============================================================
+  // FEATURE PILL
+  // ============================================================
+
+  Widget featurePill({
+    required IconData icon,
+    required String text,
+    required Color color,
+  }) {
     return Container(
       padding: const EdgeInsets.symmetric(
-        horizontal: 12,
+        horizontal: 10,
         vertical: 7,
       ),
       decoration: BoxDecoration(
-        color: color.withOpacity(.15),
+        color: color.withOpacity(.10),
         borderRadius: BorderRadius.circular(20),
         border: Border.all(
-          color: color.withOpacity(.4),
+          color: color.withOpacity(.25),
         ),
       ),
-      child: Text(
-        text,
-        style: TextStyle(
-          color: color,
-          fontSize: 11,
-          fontWeight: FontWeight.bold,
-        ),
+      child: Row(
+        mainAxisSize: MainAxisSize.min,
+        children: [
+          Icon(
+            icon,
+            color: color,
+            size: 13,
+          ),
+          const SizedBox(width: 5),
+          Text(
+            text,
+            style: TextStyle(
+              color: color,
+              fontSize: 9,
+              fontWeight: FontWeight.bold,
+            ),
+          ),
+        ],
       ),
     );
   }
 
-  Widget glow(Color color, double size) {
+  // ============================================================
+  // GLOW
+  // ============================================================
+
+  Widget glow(
+    Color color,
+    double size,
+  ) {
     return Container(
       height: size,
       width: size,
@@ -338,45 +689,35 @@ class _SplashScreenState extends State<SplashScreen>
         shape: BoxShape.circle,
         gradient: RadialGradient(
           colors: [
-            color.withOpacity(.35),
+            color.withOpacity(.20),
+            color.withOpacity(.06),
             Colors.transparent,
           ],
         ),
       ),
     );
   }
-}
 
-class FoodBubble extends StatelessWidget {
-  final String emoji;
+  // ============================================================
+  // DECORATIVE DOT
+  // ============================================================
 
-  const FoodBubble({
-    super.key,
-    required this.emoji,
-  });
-
-  @override
-  Widget build(BuildContext context) {
+  Widget decorativeCircle(
+    double size,
+    Color color,
+  ) {
     return Container(
-      height: 55,
-      width: 55,
+      height: size,
+      width: size,
       decoration: BoxDecoration(
-        color: const Color(0xff15171D),
+        color: color.withOpacity(.5),
         shape: BoxShape.circle,
         boxShadow: [
           BoxShadow(
-            color: Colors.black.withOpacity(.4),
+            color: color.withOpacity(.3),
             blurRadius: 15,
-          )
-        ],
-      ),
-      child: Center(
-        child: Text(
-          emoji,
-          style: const TextStyle(
-            fontSize: 28,
           ),
-        ),
+        ],
       ),
     );
   }

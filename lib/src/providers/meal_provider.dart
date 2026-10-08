@@ -1,4 +1,4 @@
-// src/viewmodels/meal_viewmodel.dart
+// Provider for meal data.
 import 'package:flutter/material.dart';
 
 import '../models/meal_model.dart';
